@@ -5,7 +5,7 @@ import gzip
 import pickle
 
 # -------------------------------
-# Load Model (Cached)
+# Load Model
 # -------------------------------
 @st.cache_resource
 def load_model():
@@ -20,52 +20,77 @@ def load_model():
 model = load_model()
 
 # -------------------------------
-# App Title
+# Page Config
 # -------------------------------
-st.set_page_config(page_title="Prediction App", layout="centered")
-st.title("📦 Shipment / Prediction App")
+st.set_page_config(page_title="Demand Prediction App", layout="centered")
+st.title("📊 Demand Prediction System")
 
-st.write("Enter details below to get prediction")
-
-# -------------------------------
-# User Inputs (Example Inputs)
-# Modify these based on YOUR dataset
-# -------------------------------
-
-age = st.number_input("Age", min_value=0, max_value=100, value=25)
-salary = st.number_input("Salary", min_value=0, value=30000)
-
-# Example categorical input
-gender = st.selectbox("Gender", ["Male", "Female"])
-
-# Encode categorical manually (update based on training)
-gender_encoded = 1 if gender == "Male" else 0
+st.write("Enter product and market details")
 
 # -------------------------------
-# Prediction Button
+# User Inputs (MATCH DATASET)
 # -------------------------------
-if st.button("Predict"):
+
+date = st.date_input("Date")
+
+product_id = st.number_input("Product ID", value=1000)
+category_id = st.number_input("Category ID", value=1)
+store_id = st.number_input("Store ID", value=1)
+
+historical_sales = st.number_input("Historical Sales", value=10)
+price = st.number_input("Price", value=50.0)
+
+promotion_flag = st.selectbox("Promotion", [0, 1])
+holiday_flag = st.selectbox("Holiday", [0, 1])
+
+economic_index = st.number_input("Economic Index", value=100.0)
+
+# -------------------------------
+# Feature Engineering (IMPORTANT)
+# -------------------------------
+
+# Convert date into useful features
+year = date.year
+month = date.month
+day = date.day
+day_of_week = date.weekday()
+
+# -------------------------------
+# Prediction
+# -------------------------------
+if st.button("Predict Demand"):
 
     if model is None:
-        st.error("Model not loaded properly.")
+        st.error("Model not loaded.")
     else:
         try:
-            # Create input array (IMPORTANT: match training format)
-            input_data = np.array([[age, salary, gender_encoded]])
+            # Create DataFrame (BEST PRACTICE)
+            input_data = pd.DataFrame({
+                'year': [year],
+                'month': [month],
+                'day': [day],
+                'day_of_week': [day_of_week],
+                'product_id': [product_id],
+                'category_id': [category_id],
+                'store_id': [store_id],
+                'historical_sales': [historical_sales],
+                'price': [price],
+                'promotion_flag': [promotion_flag],
+                'holiday_flag': [holiday_flag],
+                'economic_index': [economic_index]
+            })
 
             # Prediction
             prediction = model.predict(input_data)
 
-            # Output
-            st.success(f"Prediction Result: {prediction[0]}")
+            st.success(f"📦 Predicted Demand: {int(prediction[0])}")
 
         except Exception as e:
-            st.error("Prediction failed. Check model features.")
+            st.error("Prediction failed. Check feature mismatch.")
             st.exception(e)
 
 # -------------------------------
-# Debug Section (Optional)
+# Debug Section
 # -------------------------------
 with st.expander("🔍 Debug Info"):
     st.write("Model Loaded:", model is not None)
-    st.write("Input Data Shape:", np.array([[age, salary, gender_encoded]]).shape)
