@@ -1,60 +1,71 @@
 import streamlit as st
+import numpy as np
 import pandas as pd
 import gzip
 import pickle
 
-# ---------------------------
-# Load Model
-# ---------------------------
+# -------------------------------
+# Load Model (Cached)
+# -------------------------------
 @st.cache_resource
 def load_model():
-    with gzip.open("model_compressed.pkl.gz", "rb") as f:
-        model = pickle.load(f)
-    return model
+    try:
+        with gzip.open("model_compressed.pkl.gz", "rb") as f:
+            model = pickle.load(f)
+        return model
+    except Exception as e:
+        st.error(f"Error loading model: {e}")
+        return None
 
 model = load_model()
 
-# ---------------------------
-# Title
-# ---------------------------
-st.title("📦 Demand Forecasting Dashboard")
+# -------------------------------
+# App Title
+# -------------------------------
+st.set_page_config(page_title="Prediction App", layout="centered")
+st.title("📦 Shipment / Prediction App")
 
-# ---------------------------
-# User Inputs
-# ---------------------------
-st.subheader("🔮 Predict Future Demand")
+st.write("Enter details below to get prediction")
 
-day = st.number_input("Day", min_value=1, max_value=31, value=15)
-month = st.number_input("Month", min_value=1, max_value=12, value=6)
-year = st.number_input("Year", min_value=2013, max_value=2030, value=2018)
+# -------------------------------
+# User Inputs (Example Inputs)
+# Modify these based on YOUR dataset
+# -------------------------------
 
-# ---------------------------
-# Prediction
-# ---------------------------
-if st.button("Predict Demand"):
+age = st.number_input("Age", min_value=0, max_value=100, value=25)
+salary = st.number_input("Salary", min_value=0, value=30000)
 
-    # Create input data (must match training features)
-    input_df = pd.DataFrame({
-        "day": [day],
-        "month": [month],
-        "year": [year]
-    })
+# Example categorical input
+gender = st.selectbox("Gender", ["Male", "Female"])
 
-   try:
-    st.write("Expected features:", model.feature_names_in_)
+# Encode categorical manually (update based on training)
+gender_encoded = 1 if gender == "Male" else 0
 
-    input_df = pd.DataFrame([{
-        col: 0 for col in model.feature_names_in_
-    }])
+# -------------------------------
+# Prediction Button
+# -------------------------------
+if st.button("Predict"):
 
-    prediction = model.predict(input_df)
+    if model is None:
+        st.error("Model not loaded properly.")
+    else:
+        try:
+            # Create input array (IMPORTANT: match training format)
+            input_data = np.array([[age, salary, gender_encoded]])
 
-    st.success(f"Prediction: {prediction[0]}")
+            # Prediction
+            prediction = model.predict(input_data)
 
- except Exception as e:
-    st.error(e)
+            # Output
+            st.success(f"Prediction Result: {prediction[0]}")
 
-# ---------------------------
-# Info
-# ---------------------------
-st.info("This model predicts demand based on day, month, and year.")
+        except Exception as e:
+            st.error("Prediction failed. Check model features.")
+            st.exception(e)
+
+# -------------------------------
+# Debug Section (Optional)
+# -------------------------------
+with st.expander("🔍 Debug Info"):
+    st.write("Model Loaded:", model is not None)
+    st.write("Input Data Shape:", np.array([[age, salary, gender_encoded]]).shape)
