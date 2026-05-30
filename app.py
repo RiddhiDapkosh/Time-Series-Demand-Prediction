@@ -144,8 +144,8 @@ else:
       st.success("🔥 High Demand Expected")
 
     except Exception as e:
-            st.error("Prediction failed ❌")
-            st.exception(e)
+        st.error("Prediction failed ❌")
+        st.exception(e)
           
        
 
