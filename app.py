@@ -139,12 +139,12 @@ if predict_btn:
 
         if prediction < 10:
              st.warning("⚠️ Low Demand Expected")
-       elif prediction < 30:
+        elif prediction < 30:
              st.info("📊 Moderate Demand Expected")
-       else:
+        else:
              st.success("🔥 High Demand Expected")
 
-   except Exception as e:
+    except Exception as e:
             st.error("Prediction failed ❌")
             st.exception(e)
           
