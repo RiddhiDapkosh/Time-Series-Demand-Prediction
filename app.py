@@ -128,25 +128,25 @@ if predict_btn:
         st.error("Prediction failed ❌")
         st.exception(e)
 
-            # -------------------------------
-            # RESULT CARD
-            # -------------------------------
-            st.markdown("---")
-            st.markdown("### 🎯 Prediction Result")
+        #     # -------------------------------
+        #     # RESULT CARD
+        #     # -------------------------------
+        #     st.markdown("---")
+        #     st.markdown("### 🎯 Prediction Result")
 
-            st.success(f"📦 Predicted Demand: **{int(prediction)} units**")
+        #     st.success(f"📦 Predicted Demand: **{int(prediction)} units**")
 
-            # Insight messages
-            if prediction < 10:
-                st.warning("⚠️ Low Demand Expected")
-            elif prediction < 30:
-                st.info("📊 Moderate Demand Expected")
-            else:
-                st.success("🔥 High Demand Expected")
+        #     # Insight messages
+        #     if prediction < 10:
+        #         st.warning("⚠️ Low Demand Expected")
+        #     elif prediction < 30:
+        #         st.info("📊 Moderate Demand Expected")
+        #     else:
+        #         st.success("🔥 High Demand Expected")
 
-        except Exception as e:
-            st.error("Prediction failed ❌")
-            st.exception(e)
+        # except Exception as e:
+        #     st.error("Prediction failed ❌")
+        #     st.exception(e)
 
 # -------------------------------
 # DEBUG SECTION
