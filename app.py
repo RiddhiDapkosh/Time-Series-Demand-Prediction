@@ -144,7 +144,7 @@ if predict_btn:
         else:
             st.success("🔥 High Demand Expected")
 
-        except Exception as e:
+    except Exception as e:
             st.error("Prediction failed ❌")
             st.exception(e)
 
