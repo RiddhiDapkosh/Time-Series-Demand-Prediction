@@ -20,7 +20,7 @@ st.markdown("""
     .title {
         font-size: 40px;
         font-weight: bold;
-        color: #2c3e50;
+        color: white;
     }
     .card {
         background-color: white;
