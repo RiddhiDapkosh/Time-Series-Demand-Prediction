@@ -4,72 +4,57 @@ import gzip
 import pickle
 
 # ---------------------------
-
 # Load Model
-
 # ---------------------------
-
 @st.cache_resource
 def load_model():
-  with gzip.open("model_compressed.pkl.gz", "rb") as f:
-  model = pickle.load(f)
-  return model
+    with gzip.open("model_compressed.pkl.gz", "rb") as f:
+        model = pickle.load(f)
+    return model
 
 model = load_model()
 
 # ---------------------------
-
-# App Title
-
+# Title
 # ---------------------------
-
 st.title("📦 Demand Forecasting Dashboard")
 
 # ---------------------------
-
-# Input UI
-
+# User Inputs
 # ---------------------------
-
 st.subheader("🔮 Predict Future Demand")
 
-day = st.number_input("Enter Day", min_value=1, max_value=31, value=15)
-month = st.number_input("Enter Month", min_value=1, max_value=12, value=6)
-year = st.number_input("Enter Year", min_value=2013, max_value=2030, value=2018)
+day = st.number_input("Day", min_value=1, max_value=31, value=15)
+month = st.number_input("Month", min_value=1, max_value=12, value=6)
+year = st.number_input("Year", min_value=2013, max_value=2030, value=2018)
 
 # ---------------------------
-
 # Prediction
-
 # ---------------------------
-
 if st.button("Predict Demand"):
 
-```
-# Create input dataframe (must match training features)
-input_df = pd.DataFrame({
-    "day": [day],
-    "month": [month],
-    "year": [year]
-})
+    # Create input data (must match training features)
+    input_df = pd.DataFrame({
+        "day": [day],
+        "month": [month],
+        "year": [year]
+    })
 
-try:
-    prediction = model.predict(input_df)
-    result = int(prediction[0])
+    try:
+        prediction = model.predict(input_df)
+        result = int(prediction[0])
 
-    if result < 0:
-        result = 0  # avoid negative demand
+        # Avoid negative values
+        if result < 0:
+            result = 0
 
-    st.success(f"📦 Predicted Demand: {result}")
+        st.success(f"📦 Predicted Demand: {result}")
 
-except Exception as e:
-    st.error("❌ Prediction failed. Check model features.")
-    st.write(e)
+    except Exception as e:
+        st.error("❌ Prediction failed. Check model features.")
+        st.write(e)
 
 # ---------------------------
-
 # Info
-
 # ---------------------------
-
-st.info("Model predicts demand based on day, month, and year.")
+st.info("This model predicts demand based on day, month, and year.")
