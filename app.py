@@ -10,31 +10,47 @@ import pickle
 st.set_page_config(page_title="Demand Prediction", layout="wide")
 
 # -------------------------------
-# Custom Styling (🔥 UI Upgrade)
+# UI STYLE
 # -------------------------------
 st.markdown("""
     <style>
     .main {
         background-color: #f5f7fa;
     }
+
     .title {
-        font-size: 40px;
-        font-weight: bold;
-        color: white;
+        text-align: center;
+        font-size: 52px;
+        font-weight: 900;
+        color: #1f3b57;
+        margin-bottom: 10px;
     }
-    .card {
-        background-color: white;
+
+    .subtitle {
+        text-align: center;
+        font-size: 18px;
+        color: gray;
+        margin-bottom: 30px;
+    }
+
+    .block {
+        background: white;
         padding: 20px;
         border-radius: 15px;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.08);
     }
     </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<p class="title">📦 Demand Prediction Dashboard</p>', unsafe_allow_html=True)
+# -------------------------------
+# TITLE (BIG)
+# -------------------------------
+st.markdown('<div class="title">📦 Demand Prediction System</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">AI-powered sales forecasting dashboard</div>', unsafe_allow_html=True)
 
 # -------------------------------
-# Load Model
+# LOAD MODEL
 # -------------------------------
 @st.cache_resource
 def load_model():
@@ -44,52 +60,56 @@ def load_model():
 model = load_model()
 
 # -------------------------------
-# Layout
+# DATE BLOCK
 # -------------------------------
-col1, col2 = st.columns(2)
+st.markdown('<div class="block">', unsafe_allow_html=True)
+st.subheader("📅 Date Information")
 
-with col1:
-    st.markdown("### 📅 Date Info")
-    date = st.date_input("Select Date")
+date = st.date_input("Select Date")
 
-    year = date.year
-    month = date.month
-    day = date.day
-    day_of_week = date.weekday()
+year = date.year
+month = date.month
+day = date.day
+day_of_week = date.weekday()
 
-with col2:
-    st.markdown("### 🏪 Product Info")
-    product_id = st.number_input("Product ID", value=1000)
-    category_id = st.number_input("Category ID", value=1)
-    store_id = st.number_input("Store ID", value=1)
-
-st.markdown("### 📊 Sales Info")
-col3, col4, col5 = st.columns(3)
-
-with col3:
-    historical_sales = st.number_input("Historical Sales", value=10)
-
-with col4:
-    price = st.number_input("Price", value=50.0)
-
-with col5:
-    economic_index = st.number_input("Economic Index", value=100.0)
-
-col6, col7 = st.columns(2)
-
-with col6:
-    promotion_flag = st.selectbox("Promotion", [0, 1])
-
-with col7:
-    holiday_flag = st.selectbox("Holiday", [0, 1])
+st.markdown('</div>', unsafe_allow_html=True)
 
 # -------------------------------
-# Prediction
+# PRODUCT BLOCK
 # -------------------------------
-if st.button("🚀 Predict Demand"):
+st.markdown('<div class="block">', unsafe_allow_html=True)
+st.subheader("🏪 Product Information")
+
+product_id = st.number_input("Product ID", value=1000)
+category_id = st.number_input("Category ID", value=1)
+store_id = st.number_input("Store ID", value=1)
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+# -------------------------------
+# SALES BLOCK
+# -------------------------------
+st.markdown('<div class="block">', unsafe_allow_html=True)
+st.subheader("📊 Sales & Market Data")
+
+historical_sales = st.number_input("Historical Sales", value=10)
+price = st.number_input("Price", value=50.0)
+economic_index = st.number_input("Economic Index", value=100.0)
+
+promotion_flag = st.selectbox("Promotion Flag", [0, 1])
+holiday_flag = st.selectbox("Holiday Flag", [0, 1])
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+# -------------------------------
+# PREDICT BUTTON
+# -------------------------------
+st.markdown('<div class="block">', unsafe_allow_html=True)
+st.subheader("🚀 Prediction")
+
+if st.button("Predict Demand"):
 
     try:
-        # Create input DataFrame EXACTLY
         input_df = pd.DataFrame([{
             'year': year,
             'month': month,
@@ -105,34 +125,30 @@ if st.button("🚀 Predict Demand"):
             'economic_index': economic_index
         }])
 
-        # 🔥 FIX: Match training columns
+        # Match training features
         if hasattr(model, "feature_names_in_"):
             input_df = input_df.reindex(columns=model.feature_names_in_, fill_value=0)
 
-        # Predict
         prediction = model.predict(input_df)[0]
 
-        # -------------------------------
-        # Output UI
-        # -------------------------------
-        st.markdown("### 📈 Prediction Result")
-
-        st.success(f"Predicted Demand: {int(prediction)} units")
+        st.success(f"📦 Predicted Demand: {int(prediction)} units")
 
         if prediction < 10:
-            st.warning("⚠️ Low Demand Expected")
+            st.warning("Low Demand ⚠️")
         elif prediction < 30:
-            st.info("📊 Medium Demand")
+            st.info("Medium Demand 📊")
         else:
-            st.success("🔥 High Demand Expected!")
+            st.success("High Demand 🔥")
 
     except Exception as e:
         st.error("Prediction failed ❌")
         st.exception(e)
 
+st.markdown('</div>', unsafe_allow_html=True)
+
 # -------------------------------
-# Debug Panel
+# DEBUG
 # -------------------------------
 with st.expander("🔍 Debug Info"):
     if hasattr(model, "feature_names_in_"):
-        st.write("Expected Features:", list(model.feature_names_in_))
+        st.write(model.feature_names_in_)
