@@ -11,9 +11,9 @@ import pickle
 
 @st.cache_resource
 def load_model():
-with gzip.open("model_compressed.pkl.gz", "rb") as f:
-model = pickle.load(f)
-return model
+  with gzip.open("model_compressed.pkl.gz", "rb") as f:
+  model = pickle.load(f)
+  return model
 
 model = load_model()
 
