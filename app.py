@@ -137,16 +137,16 @@ if predict_btn:
         st.success(f"📦 Predicted Demand: **{int(prediction)} units**")
 
 
-    if prediction < 10:
-        st.warning("⚠️ Low Demand Expected")
-    elif prediction < 30:
-        st.info("📊 Moderate Demand Expected")
-    else:
-        st.success("🔥 High Demand Expected")
+        if prediction < 10:
+             st.warning("⚠️ Low Demand Expected")
+       elif prediction < 30:
+             st.info("📊 Moderate Demand Expected")
+       else:
+             st.success("🔥 High Demand Expected")
 
-except Exception as e:
-    st.error("Prediction failed ❌")
-    st.exception(e)
+   except Exception as e:
+            st.error("Prediction failed ❌")
+            st.exception(e)
           
        
 
