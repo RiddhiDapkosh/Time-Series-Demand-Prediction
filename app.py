@@ -135,18 +135,21 @@ if predict_btn:
         st.markdown("### 🎯 Prediction Result")
 
         st.success(f"📦 Predicted Demand: **{int(prediction)} units**")
+        # prediction = model.predict(input_df)[0]
 
-            # Insight messages
-        if prediction < 10:
-            st.warning("⚠️ Low Demand Expected")
-        elif prediction < 30:
-            st.info("📊 Moderate Demand Expected")
-        else:
-            st.success("🔥 High Demand Expected")
+# RESULT
+# st.success(f"📦 Predicted Demand: {int(prediction)} units")
 
-    except Exception as e:
-            st.error("Prediction failed ❌")
-            st.exception(e)
+# Demand classification
+if prediction < 10:
+    st.warning("⚠️ Low Demand Expected")
+elif prediction < 30:
+    st.info("📊 Medium Demand Expected")
+else:
+    st.success("🔥 High Demand Expected")
+
+          
+       
 
 # -------------------------------
 # DEBUG SECTION
