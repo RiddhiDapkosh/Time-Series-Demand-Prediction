@@ -22,7 +22,7 @@ st.markdown("""
         text-align: center;
         font-size: 48px;
         font-weight: 900;
-        color: #1f3b57;
+        color: white;
         margin-bottom: 5px;
     }
 
@@ -46,7 +46,7 @@ st.markdown("""
 # -------------------------------
 # TITLE
 # -------------------------------
-st.markdown('<div class="title">📦 Demand Prediction System</div>', unsafe_allow_html=True)
+st.markdown('<div class="title">📦 Demand Forecast Prediction System</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Smart AI-based Sales Forecasting Dashboard</div>', unsafe_allow_html=True)
 
 # -------------------------------
@@ -88,35 +88,45 @@ holiday_flag = st.sidebar.selectbox("Holiday Flag", [0, 1])
 # -------------------------------
 # MAIN AREA
 # -------------------------------
+# -------------------------------
+# MAIN AREA
+# -------------------------------
 st.markdown("## 📊 Prediction Panel")
 
-col1, col2, col3 = st.columns([1, 2, 1])
+col1, col2, col3 = st.columns([2, 1, 2])
 
 with col2:
+    predict_btn = st.button("🚀 Predict Demand")
 
-    if st.button("🚀 Predict Demand", use_container_width=True):
+if predict_btn:
 
-        try:
-            input_df = pd.DataFrame([{
-                'year': year,
-                'month': month,
-                'day': day,
-                'day_of_week': day_of_week,
-                'product_id': product_id,
-                'category_id': category_id,
-                'store_id': store_id,
-                'historical_sales': historical_sales,
-                'price': price,
-                'promotion_flag': promotion_flag,
-                'holiday_flag': holiday_flag,
-                'economic_index': economic_index
-            }])
+    try:
+        input_df = pd.DataFrame([{
+            'year': year,
+            'month': month,
+            'day': day,
+            'day_of_week': day_of_week,
+            'product_id': product_id,
+            'category_id': category_id,
+            'store_id': store_id,
+            'historical_sales': historical_sales,
+            'price': price,
+            'promotion_flag': promotion_flag,
+            'holiday_flag': holiday_flag,
+            'economic_index': economic_index
+        }])
 
-            # match model features
-            if hasattr(model, "feature_names_in_"):
-                input_df = input_df.reindex(columns=model.feature_names_in_, fill_value=0)
+        # match model features
+        if hasattr(model, "feature_names_in_"):
+            input_df = input_df.reindex(columns=model.feature_names_in_, fill_value=0)
 
-            prediction = model.predict(input_df)[0]
+        prediction = model.predict(input_df)[0]
+
+        st.success(f"📦 Predicted Demand: {int(prediction)} units")
+
+    except Exception as e:
+        st.error("Prediction failed ❌")
+        st.exception(e)
 
             # -------------------------------
             # RESULT CARD
