@@ -143,9 +143,9 @@ elif prediction < 30:
 else:
       st.success("🔥 High Demand Expected")
 
-     except Exception as e:
-         st.error("Prediction failed ❌")
-         st.exception(e)
+     # except Exception as e:
+     #     st.error("Prediction failed ❌")
+     #     st.exception(e)
           
        
 
