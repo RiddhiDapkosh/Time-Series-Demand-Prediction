@@ -1,52 +1,75 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 import gzip
 import pickle
 
 # ---------------------------
-# Load Model (TOP)
+
+# Load Model
+
 # ---------------------------
+
 @st.cache_resource
 def load_model():
-    with gzip.open("model_compressed.pkl.gz", "rb") as f:
-        model = pickle.load(f)
-    return model
+with gzip.open("model_compressed.pkl.gz", "rb") as f:
+model = pickle.load(f)
+return model
 
 model = load_model()
 
 # ---------------------------
-# Title
+
+# App Title
+
 # ---------------------------
+
 st.title("📦 Demand Forecasting Dashboard")
 
 # ---------------------------
-# Prediction UI
+
+# Input UI
+
 # ---------------------------
+
 st.subheader("🔮 Predict Future Demand")
 
-day = st.slider("Day", 1, 31, 15)
-month = st.slider("Month", 1, 12, 6)
-year = st.slider("Year", 2013, 2025, 2018)
+day = st.number_input("Enter Day", min_value=1, max_value=31, value=15)
+month = st.number_input("Enter Month", min_value=1, max_value=12, value=6)
+year = st.number_input("Enter Year", min_value=2013, max_value=2030, value=2018)
 
 # ---------------------------
-# Prediction Logic (CONNECTED)
-# ---------------------------
-if st.button("Predict"):
-    # Create input DataFrame (VERY IMPORTANT)
-    input_data = pd.DataFrame({
-        'day': [day],
-        'month': [month],
-        'year': [year]
-    })
 
-    # Predict
-    prediction = model.predict(input_data)
-
-    # Output
-    st.success(f"📦 Predicted Demand: {int(prediction[0])}")
+# Prediction
 
 # ---------------------------
-# (Optional) Info
+
+if st.button("Predict Demand"):
+
+```
+# Create input dataframe (must match training features)
+input_df = pd.DataFrame({
+    "day": [day],
+    "month": [month],
+    "year": [year]
+})
+
+try:
+    prediction = model.predict(input_df)
+    result = int(prediction[0])
+
+    if result < 0:
+        result = 0  # avoid negative demand
+
+    st.success(f"📦 Predicted Demand: {result}")
+
+except Exception as e:
+    st.error("❌ Prediction failed. Check model features.")
+    st.write(e)
+
 # ---------------------------
-st.info("Model uses day, month, and year features for prediction.")
+
+# Info
+
+# ---------------------------
+
+st.info("Model predicts demand based on day, month, and year.")
