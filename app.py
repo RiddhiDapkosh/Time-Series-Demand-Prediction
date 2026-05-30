@@ -1,6 +1,6 @@
 import streamlit as st
-import numpy as np
 import pandas as pd
+import numpy as np
 import gzip
 import pickle
 
@@ -20,18 +20,15 @@ def load_model():
 model = load_model()
 
 # -------------------------------
-# Page Config
+# Page Setup
 # -------------------------------
-st.set_page_config(page_title="Demand Prediction App", layout="centered")
-st.title("📊 Demand Prediction System")
-
-st.write("Enter product and market details")
+st.set_page_config(page_title="Demand Prediction", layout="centered")
+st.title("📦 Demand Prediction App")
 
 # -------------------------------
-# User Inputs (MATCH DATASET)
+# Inputs
 # -------------------------------
-
-date = st.date_input("Date")
+date = st.date_input("Select Date")
 
 product_id = st.number_input("Product ID", value=1000)
 category_id = st.number_input("Category ID", value=1)
@@ -46,26 +43,22 @@ holiday_flag = st.selectbox("Holiday", [0, 1])
 economic_index = st.number_input("Economic Index", value=100.0)
 
 # -------------------------------
-# Feature Engineering (IMPORTANT)
-# -------------------------------
-
-# Convert date into useful features
-year = date.year
-month = date.month
-day = date.day
-day_of_week = date.weekday()
-
-# -------------------------------
-# Prediction
+# Predict
 # -------------------------------
 if st.button("Predict Demand"):
 
     if model is None:
-        st.error("Model not loaded.")
+        st.error("Model not loaded")
     else:
         try:
-            # Create DataFrame (BEST PRACTICE)
-            input_data = pd.DataFrame({
+            # ---- Convert Date ----
+            year = date.year
+            month = date.month
+            day = date.day
+            day_of_week = date.weekday()
+
+            # ---- Create DataFrame ----
+            input_df = pd.DataFrame({
                 'year': [year],
                 'month': [month],
                 'day': [day],
@@ -80,17 +73,27 @@ if st.button("Predict Demand"):
                 'economic_index': [economic_index]
             })
 
-            # Prediction
-            prediction = model.predict(input_data)
+            # -------------------------------
+            # 🔥 CRITICAL FIX: Match model features
+            # -------------------------------
+            if hasattr(model, "feature_names_in_"):
+                expected_cols = model.feature_names_in_
+                input_df = input_df.reindex(columns=expected_cols, fill_value=0)
 
-            st.success(f"📦 Predicted Demand: {int(prediction[0])}")
+            # -------------------------------
+            # Prediction
+            # -------------------------------
+            prediction = model.predict(input_df)
+
+            st.success(f"📊 Predicted Demand: {int(prediction[0])}")
 
         except Exception as e:
-            st.error("Prediction failed. Check feature mismatch.")
+            st.error("❌ Prediction failed. Feature mismatch or preprocessing issue.")
             st.exception(e)
 
 # -------------------------------
-# Debug Section
+# Debug
 # -------------------------------
 with st.expander("🔍 Debug Info"):
-    st.write("Model Loaded:", model is not None)
+    if model is not None and hasattr(model, "feature_names_in_"):
+        st.write("Model expects columns:", model.feature_names_in_)
