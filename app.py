@@ -40,19 +40,19 @@ if st.button("Predict Demand"):
         "year": [year]
     })
 
-    try:
-        prediction = model.predict(input_df)
-        result = int(prediction[0])
+   try:
+    st.write("Expected features:", model.feature_names_in_)
 
-        # Avoid negative values
-        if result < 0:
-            result = 0
+    input_df = pd.DataFrame([{
+        col: 0 for col in model.feature_names_in_
+    }])
 
-        st.success(f"📦 Predicted Demand: {result}")
+    prediction = model.predict(input_df)
 
-    except Exception as e:
-        st.error("❌ Prediction failed. Check model features.")
-        st.write(e)
+    st.success(f"Prediction: {prediction[0]}")
+
+ except Exception as e:
+    st.error(e)
 
 # ---------------------------
 # Info
