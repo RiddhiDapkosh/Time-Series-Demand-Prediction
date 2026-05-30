@@ -124,17 +124,17 @@ if predict_btn:
 
         st.success(f"📦 Predicted Demand: {int(prediction)} units")
 
-    except Exception as e:
-        st.error("Prediction failed ❌")
-        st.exception(e)
+    # except Exception as e:
+    #     st.error("Prediction failed ❌")
+    #     st.exception(e)
 
-        #     # -------------------------------
-        #     # RESULT CARD
-        #     # -------------------------------
-        st.markdown("---")
-        st.markdown("### 🎯 Prediction Result")
+    #     #     # -------------------------------
+    #     #     # RESULT CARD
+    #     #     # -------------------------------
+    #     st.markdown("---")
+    #     st.markdown("### 🎯 Prediction Result")
 
-        st.success(f"📦 Predicted Demand: **{int(prediction)} units**")
+    #     st.success(f"📦 Predicted Demand: **{int(prediction)} units**")
 
         if prediction < 10:
             st.warning("⚠️ Low Demand Expected")
