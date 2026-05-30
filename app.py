@@ -3,6 +3,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 
+import gzip
+import pickle
+
+@st.cache_resource
+def load_model():
+    with gzip.open("model_compressed.pkl.gz", "rb") as f:
+        model = pickle.load(f)
+    return model
+
+model = load_model()
+
 # Title
 st.title("📦 Demand Forecasting Dashboard")
 
